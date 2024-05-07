@@ -1,0 +1,82 @@
+import pyttsx3
+import speech_recognition as sr
+import datetime
+import wikipedia
+import webbrowser
+import googlesearch
+import pyaudio
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+def wishMe():
+    hour = datetime.datetime.now().hour
+    if 0 <= hour < 12:
+        speak("Good morning, sir!")
+    elif 12 <= hour < 18:
+        speak("Good afternoon, sir!")
+    else:
+        speak("Good evening, sir!")
+    speak("How may I help you?")
+
+
+def takecommand():
+    r = sr.Recognizer()
+    query = ""
+    with sr.Microphone() as source:
+        print("Listening.....")
+        r.pause_threshold = 0.3
+        r.non_speaking_duration = 0.2
+        audio = r.listen(source)
+
+    try:
+        print("Recognizing....")
+        query = r.recognize_google(audio, language='en-in')
+        print(f"User said: {query}\n")
+    except Exception as e:
+        print(e)
+        print("Say that again, please.....")
+    return query
+
+
+if __name__ == "__main__":
+    wishMe()
+    chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+
+    while True:
+        query = takecommand().lower()
+
+        if "wikipedia" in query:
+            speak('Searching Wikipedia....')
+            query = query.replace("wikipedia", "")
+            results = wikipedia.summary(query, sentences=4)
+            speak("According to Wikipedia")
+            speak(results)
+
+        elif 'open youtube' in query:
+            webbrowser.register("chrome", None, webbrowser.BackgroundBrowser(chrome_path))
+            webbrowser.get("chrome").open_new_tab("youtube.com")
+
+        elif 'open instagram' in query:
+            webbrowser.register("chrome", None, webbrowser.BackgroundBrowser(chrome_path))
+            webbrowser.get("chrome").open_new_tab("instagram.com")
+
+        elif "hey dark who are you" in query or "introduce yourself dark" in query:
+            speak("I am Dark, the virtual artificial intelligence. I am here to assist you, sir, with a variety of tasks 24/7. Importing your preferences into your system... System is now fully operational. How may I help you, sir?")
+
+        elif 'open google' in query:
+            webbrowser.register("chrome", None, webbrowser.BackgroundBrowser(chrome_path))
+            webbrowser.get("chrome").open_new_tab("google.com")
+
+        elif "the time" in query:
+            strtime = datetime.datetime.now().strftime("%H:%M:%S")
+            speak("Sir, the time is {
+                
+            }")
